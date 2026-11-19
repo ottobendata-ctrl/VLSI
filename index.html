@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VLSI Exam Question Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;600&family=Archivo+Narrow:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Layout: left rail of filters + score, right column of one question card at a time. Chip-die palette: silicon grey, copper trace accent. */
+  --bg:#eef0f2; --panel:#ffffff; --ink:#1b2128; --muted:#5d6874; --line:#d3d8de;
+  --accent:#b5651d; --accent-ink:#ffffff; --good:#1f7a4d; --bad:#b3261e; --soft:#f6f2ec;
+  --display:"Archivo Narrow","Arial Narrow",sans-serif; --body:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12161b; --panel:#1b2128; --ink:#e7ebef; --muted:#9aa5b1; --line:#2e3742;
+  --accent:#e0914a; --accent-ink:#1b1206; --good:#4cc38a; --bad:#ff7a70; --soft:#241f19; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#12161b; --panel:#1b2128; --ink:#e7ebef; --muted:#9aa5b1; --line:#2e3742;
+  --accent:#e0914a; --accent-ink:#1b1206; --good:#4cc38a; --bad:#ff7a70; --soft:#241f19; color-scheme:dark;}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);padding:20px 16px 60px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:290px 1fr;gap:24px;align-items:start}
+@media (max-width:820px){.wrap{grid-template-columns:1fr}}
+header{max-width:1120px;margin:0 auto 18px;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 18px}
+h1{font:700 2rem/1.1 var(--display);margin:0;letter-spacing:.01em;text-wrap:balance}
+header p{margin:0;color:var(--muted)}
+.rail,.card{background:var(--panel);border:1px solid var(--line);border-radius:10px}
+.rail{padding:16px;display:grid;gap:16px;position:sticky;top:12px}
+@media (max-width:820px){.rail{position:static}}
+.rail h2{font:600 .78rem/1 var(--mono);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:5px 10px;font:500 .82rem var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.chip:focus-visible,.btn:focus-visible,.opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.score{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.score div{background:var(--soft);border-radius:8px;padding:8px 4px}
+.score b{display:block;font:700 1.4rem/1.1 var(--display);font-variant-numeric:tabular-nums}
+.score span{font-size:.75rem;color:var(--muted)}
+.btn{border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);border-radius:8px;padding:9px 14px;font:600 .9rem var(--body);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:8px}
+.card{padding:22px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font:500 .78rem var(--mono);color:var(--muted);margin-bottom:12px}
+.tag{border:1px solid var(--line);border-radius:4px;padding:2px 7px}
+.tag.k{border-color:var(--accent);color:var(--accent)}
+.q{font:500 1.18rem/1.45 var(--body);margin:0 0 16px;max-width:65ch}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;padding:11px 14px;font:400 1rem var(--body);cursor:pointer;display:flex;gap:10px}
+.opt .l{font:600 .9rem var(--mono);color:var(--muted)}
+.opt.right{border-color:var(--good);background:color-mix(in srgb,var(--good) 12%,transparent)}
+.opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,transparent)}
+.opt[disabled]{cursor:default}
+.fb{margin-top:14px;padding:12px 14px;border-left:4px solid var(--line);background:var(--soft);border-radius:0 8px 8px 0;max-width:70ch}
+.fb.ok{border-color:var(--good)} .fb.no{border-color:var(--bad)}
+.fb b{display:block;margin-bottom:2px}
+.model ol{margin:8px 0 0;padding-left:22px} .model li{margin:4px 0}
+.nav{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-top:20px;align-items:center}
+.pos{font:500 .85rem var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+textarea{width:100%;min-height:120px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--ink);font:400 .95rem var(--body);padding:10px;margin-bottom:10px}
+.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;background:var(--accent);width:0}
+.list{margin-top:18px;display:none}
+.list.on{display:block}
+.list details{border-top:1px solid var(--line);padding:10px 0}
+.list summary{cursor:pointer;font-weight:500}
+.small{font-size:.85rem;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.bar i{transition:width .3s}}
+</style>
+</head>
+<body>
+<header>
+  <h1>VLSI Exam Question Bank</h1>
+  <p id="sub">Loading questions…</p>
+</header>
+<div class="wrap">
+  <aside class="rail">
+    <section><h2>Topic</h2><div class="chips" id="topics"></div></section>
+    <section><h2>Question type</h2><div class="chips" id="kinds"></div></section>
+    <section><h2>Order</h2><div class="row">
+      <button class="btn ghost" id="shuffle" type="button">Shuffle</button>
+      <button class="btn ghost" id="mock" type="button">Mock exam: 40 objective + 5 essay</button>
+      <button class="btn ghost" id="wrongOnly" type="button">Retry my wrong answers</button>
+    </div></section>
+    <section><h2>Score this session</h2>
+      <div class="score"><div><b id="sc">0</b><span>correct</span></div><div><b id="sw">0</b><span>wrong</span></div><div><b id="sp">–</b><span>percent</span></div></div>
+      <div class="bar"><i id="prog"></i></div>
+      <p class="small" id="progt"></p>
+      <button class="btn ghost" id="reset" type="button">Reset score</button>
+    </section>
+    <section><h2>Browse</h2><button class="btn ghost" id="toggleList" type="button">Show all in this set with answers</button></section>
+  </aside>
+  <main>
+    <article class="card" id="card"></article>
+    <div class="card list" id="list"></div>
+  </main>
+</div>
+<script>
+const KIND={M:'Multiple choice',T:'True / False',E:'Structured / Essay'};
+let BANK=[],set=[],i=0,selT=new Set(),selK=new Set(['M','T','E']),answered={},wrongIds=new Set();
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function shuffle(a){for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a}
+function store(){try{localStorage.setItem('vlsiq',JSON.stringify({answered,wrong:[...wrongIds]}))}catch(e){}}
+function load(){try{const s=JSON.parse(localStorage.getItem('vlsiq')||'{}');answered=s.answered||{};wrongIds=new Set(s.wrong||[])}catch(e){}}
+function chips(){
+  const topics=[...new Set(BANK.map(q=>q.t))];
+  $('#topics').innerHTML=['All',...topics].map(t=>{const n=t==='All'?BANK.length:BANK.filter(q=>q.t===t).length;return `<button class="chip" type="button" data-t="${esc(t)}" aria-pressed="${t==='All'?selT.size===0:selT.has(t)}">${esc(t)} · ${n}</button>`}).join('');
+  $('#kinds').innerHTML=Object.entries(KIND).map(([k,v])=>`<button class="chip" type="button" data-k="${k}" aria-pressed="${selK.has(k)}">${v} · ${BANK.filter(q=>q.k===k).length}</button>`).join('');
+}
+function build(order){
+  set=BANK.filter(q=>(selT.size===0||selT.has(q.t))&&selK.has(q.k));
+  if(order==='shuffle')shuffle(set);
+  i=0;render();renderList();
+}
+function score(){
+  const v=Object.values(answered);const c=v.filter(x=>x===1).length,w=v.filter(x=>x===0).length;
+  $('#sc').textContent=c;$('#sw').textContent=w;$('#sp').textContent=c+w?Math.round(100*c/(c+w))+'%':'–';
+  const done=set.filter(q=>q.id in answered).length;
+  $('#prog').style.width=(set.length?100*done/set.length:0)+'%';
+  $('#progt').textContent=`${done} of ${set.length} in this set answered`;
+}
+function render(){
+  const c=$('#card');
+  if(!set.length){c.innerHTML='<p>No questions match. Pick at least one topic and one question type.</p>';score();return}
+  const q=set[i];let h=`<div class="meta"><span class="tag k">${KIND[q.k]}</span><span class="tag">${esc(q.t)}</span><span>Q${q.id+1}</span></div><p class="q">${esc(q.q)}</p>`;
+  if(q.k==='M'){
+    if(!q.order)q.order=shuffle([0,1,2,3]);
+    h+='<div class="opts">'+q.order.map((o,n)=>`<button class="opt" type="button" data-o="${o}"><span class="l">${'ABCD'[n]}</span><span>${esc(q.o[o])}</span></button>`).join('')+'</div>';
+  }else if(q.k==='T'){
+    h+='<div class="opts"><button class="opt" type="button" data-tf="1"><span class="l">T</span><span>True</span></button><button class="opt" type="button" data-tf="0"><span class="l">F</span><span>False</span></button></div>';
+  }else{
+    h+=`<label class="small" for="draft">Write your answer first (points, sketches described in words), then compare.</label><textarea id="draft" placeholder="Your answer…"></textarea><div class="row"><button class="btn" id="reveal" type="button">Show model answer</button></div><div id="model"></div>`;
+  }
+  h+=`<div id="fb"></div><div class="nav"><button class="btn ghost" id="prev" type="button">← Previous</button><span class="pos">${i+1} / ${set.length}</span><button class="btn" id="next" type="button">Next →</button></div>`;
+  c.innerHTML=h;score();
+}
+function mark(ok){const q=set[i];if(!(q.id in answered)){answered[q.id]=ok?1:0;if(!ok)wrongIds.add(q.id);else wrongIds.delete(q.id);store()}score()}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(t.dataset.t!==undefined){const v=t.dataset.t;if(v==='All')selT.clear();else selT.has(v)?selT.delete(v):selT.add(v);chips();build();return}
+  if(t.dataset.k){const v=t.dataset.k;selK.has(v)?selK.delete(v):selK.add(v);chips();build();return}
+  const q=set[i];
+  if(t.dataset.o!==undefined&&q){const ok=+t.dataset.o===0;document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(+b.dataset.o===0)b.classList.add('right')});if(!ok)t.classList.add('wrong');
+    $('#fb').innerHTML=`<div class="fb ${ok?'ok':'no'}"><b>${ok?'Correct.':'Not quite. Answer: '+esc(q.o[0])}</b>${esc(q.e)}</div>`;mark(ok);return}
+  if(t.dataset.tf!==undefined&&q){const ok=(t.dataset.tf==='1')===q.a;document.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if((b.dataset.tf==='1')===q.a)b.classList.add('right')});if(!ok)t.classList.add('wrong');
+    $('#fb').innerHTML=`<div class="fb ${ok?'ok':'no'}"><b>${ok?'Correct.':'Not quite. It is '+(q.a?'True':'False')+'.'}</b>${esc(q.e)}</div>`;mark(ok);return}
+  if(t.id==='reveal'){$('#model').innerHTML=`<div class="fb model"><b>Model answer (key marking points)</b><ol>${q.a.map(x=>`<li>${esc(x)}</li>`).join('')}</ol><div class="row" style="margin-top:10px"><span class="small">Did you cover most points?</span><button class="btn" id="selfOk" type="button">Yes, mark correct</button><button class="btn ghost" id="selfNo" type="button">No, needs revision</button></div></div>`;t.remove();return}
+  if(t.id==='selfOk'){mark(true);t.parentNode.innerHTML='<span class="small">Marked correct.</span>';return}
+  if(t.id==='selfNo'){mark(false);t.parentNode.innerHTML='<span class="small">Added to "Retry my wrong answers".</span>';return}
+  if(t.id==='next'){i=(i+1)%set.length;render();window.scrollTo({top:0});return}
+  if(t.id==='prev'){i=(i-1+set.length)%set.length;render();return}
+  if(t.id==='shuffle'){build('shuffle');return}
+  if(t.id==='mock'){const pool=BANK.filter(q=>selT.size===0||selT.has(q.t));set=[...shuffle(pool.filter(q=>q.k!=='E')).slice(0,40),...shuffle(pool.filter(q=>q.k==='E')).slice(0,5)];i=0;render();renderList();return}
+  if(t.id==='wrongOnly'){set=BANK.filter(q=>wrongIds.has(q.id));i=0;render();renderList();return}
+  if(t.id==='reset'){answered={};wrongIds.clear();store();score();return}
+  if(t.id==='toggleList'){$('#list').classList.toggle('on');t.textContent=$('#list').classList.contains('on')?'Hide answer list':'Show all in this set with answers';return}
+});
+function renderList(){
+  $('#list').innerHTML=`<h2 style="font:700 1.3rem var(--display);margin:0 0 6px">All ${set.length} questions in this set</h2>`+set.map((q,n)=>{
+    let a=q.k==='M'?esc(q.o[0])+' — '+esc(q.e):q.k==='T'?(q.a?'True':'False')+' — '+esc(q.e):'<ol>'+q.a.map(x=>`<li>${esc(x)}</li>`).join('')+'</ol>';
+    return `<details><summary>${n+1}. ${esc(q.q)}</summary><div class="small" style="margin-top:6px">${a}</div></details>`}).join('');
+}
+fetch('bank.json').then(r=>r.json()).then(d=>{BANK=d.map((q,n)=>({...q,id:n}));load();
+  const c={M:0,T:0,E:0};BANK.forEach(q=>c[q.k]++);
+  $('#sub').textContent=`${BANK.length} questions from all 397 lecture slides: ${c.M} multiple choice, ${c.T} true/false, ${c.E} structured/essay with model answers.`;
+  chips();build();}).catch(()=>{$('#sub').textContent='Could not load the question file. Reload the page.'});
+</script>
+</body>
+</html>
